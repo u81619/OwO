@@ -12,6 +12,14 @@ body {
   overflow: hidden;
   font-family: sans-serif;
 }
+
+#starsCanvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: -1;
+}
+
 .info {
   position: absolute;
   top: 50%;
@@ -19,6 +27,7 @@ body {
   transform: translate(-50%, -50%);
   width: 80%;
 }
+
 #progressBar {
   width: 100%;
   background: #444;
@@ -27,16 +36,19 @@ body {
   height: 30px;
   margin-top: 20px;
 }
+
 #progressFill {
   height: 100%;
   width: 0%;
-  background: #00FF00; /* شريط التحميل أخضر */
+  background: #00FF00;
   transition: width 0.3s ease;
 }
+
 #percentage {
   margin-top: 10px;
   color: white;
 }
+
 #youtubeBtn {
   margin-top: 30px;
   padding: 10px 20px;
@@ -47,11 +59,11 @@ body {
   font-size: 20px;
   cursor: pointer;
 }
+
 #youtubeBtn:hover {
   background: #cc0000;
 }
 
-/* أشكال الزوايا الجديدة */
 .corner-rgb {
   position: absolute;
   width: 60px;
@@ -62,18 +74,22 @@ body {
   animation: rgbGlow 3s infinite linear;
   opacity: 0.8;
 }
+
 .corner-top-left {
   top: 20px;
   left: 20px;
 }
+
 .corner-top-right {
   top: 20px;
   right: 20px;
 }
+
 .corner-bottom-left {
   bottom: 20px;
   left: 20px;
 }
+
 .corner-bottom-right {
   bottom: 20px;
   right: 20px;
@@ -87,6 +103,24 @@ body {
   100% { background: red;   box-shadow: 0 0 20px red; }
 }
 </style>
+</head>
+<body>
+
+<canvas id="starsCanvas"></canvas>
+
+<div class="info">
+  <div id="progressBar">
+    <div id="progressFill"></div>
+  </div>
+  <div id="percentage">جارٍ تنصيب التخزين المؤقت 0%</div>
+  <button id="youtubeBtn" onclick="goToYouTube()">قناتي يوتيوب</button>
+</div>
+
+<div class="corner-rgb corner-top-left"></div>
+<div class="corner-rgb corner-top-right"></div>
+<div class="corner-rgb corner-bottom-left"></div>
+<div class="corner-rgb corner-bottom-right"></div>
+
 <script>
 history.replaceState(null,null,'index.html');
 var histlength = history.length;
@@ -113,20 +147,50 @@ window.applicationCache.onupdateready = function(e) { DisplayCacheProgress(); };
 function goToYouTube() {
   window.location.href = "https://www.youtube.com/@7aider777";
 }
-</script>
-</head>
-<body>
-<div class="info">
-  <div id="progressBar">
-    <div id="progressFill"></div>
-  </div>
-  <div id="percentage">جارٍ تنصيب التخزين المؤقت 0%</div>
-  <button id="youtubeBtn" onclick="goToYouTube()">قناتي يوتيوب</button>
-</div>
 
-<div class="corner-rgb corner-top-left"></div>
-<div class="corner-rgb corner-top-right"></div>
-<div class="corner-rgb corner-bottom-left"></div>
-<div class="corner-rgb corner-bottom-right"></div>
+// كود النجوم المتحركة
+const canvas = document.getElementById("starsCanvas");
+const ctx = canvas.getContext("2d");
+
+let stars = [];
+const numStars = 100;
+
+function resizeCanvas() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+}
+resizeCanvas();
+window.addEventListener("resize", resizeCanvas);
+
+function createStars() {
+  stars = [];
+  for (let i = 0; i < numStars; i++) {
+    stars.push({
+      x: Math.random() * canvas.width,
+      y: Math.random() * canvas.height,
+      radius: Math.random() * 1.5,
+      speed: Math.random() * 0.5 + 0.2
+    });
+  }
+}
+createStars();
+
+function drawStars() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.fillStyle = "white";
+  for (let star of stars) {
+    ctx.beginPath();
+    ctx.arc(star.x, star.y, star.radius, 0, Math.PI * 2);
+    ctx.fill();
+    star.y += star.speed;
+    if (star.y > canvas.height) {
+      star.y = 0;
+      star.x = Math.random() * canvas.width;
+    }
+  }
+  requestAnimationFrame(drawStars);
+}
+drawStars();
+</script>
 </body>
 </html>
